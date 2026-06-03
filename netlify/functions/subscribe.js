@@ -1,6 +1,8 @@
 const VALID_ROLES = ['buyer', 'seller', 'both'];
 
 exports.handler = async (event) => {
+  console.log('Function called with body: ' + event.body);
+
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: 'Method Not Allowed' };
   }
@@ -34,6 +36,9 @@ exports.handler = async (event) => {
       })
     });
 
+    const resBody = await res.text().catch(() => '');
+    console.log('Brevo response status: ' + res.status + ' body: ' + resBody);
+
     if (res.status === 201 || res.status === 204) {
       return { statusCode: 200, body: JSON.stringify({ success: true }) };
     }
@@ -44,7 +49,8 @@ exports.handler = async (event) => {
 
     return { statusCode: 500, body: JSON.stringify({ error: 'Something went wrong' }) };
 
-  } catch {
+  } catch (err) {
+    console.log('Brevo fetch error: ' + err.message);
     return { statusCode: 500, body: JSON.stringify({ error: 'Something went wrong' }) };
   }
 };
