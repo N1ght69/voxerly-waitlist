@@ -354,6 +354,48 @@
     }
     .reveal.visible { opacity: 1; transform: none; }
 
+    /* ─── Cookie Banner ─── */
+    #cookie-banner {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 200;
+      background: #1A1A17;
+      border-top: 1px solid #2A2825;
+      padding: 14px 24px;
+    }
+    .cookie-inner {
+      max-width: 1160px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .cookie-text { font-size: 13px; color: #A09E98; margin: 0; flex: 1; min-width: 200px; }
+    .cookie-actions { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+    .cookie-learn { font-size: 13px; color: #A09E98; text-decoration: none; }
+    .cookie-learn:hover { color: #F0EEE8; }
+    .cookie-accept {
+      font-family: 'Epilogue', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      background: #E8A838;
+      color: #0D0D0B;
+      border: none;
+      border-radius: 5px;
+      padding: 7px 16px;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    .cookie-accept:hover { opacity: 0.85; }
+    @media (max-width: 600px) {
+      .cookie-inner { flex-direction: column; align-items: flex-start; }
+      .cookie-actions { width: 100%; justify-content: flex-end; }
+    }
+
     /* ─── Reduced motion ─── */
     @media (prefers-reduced-motion: reduce) {
       .mockup-tilt { animation: none !important; transform: rotateY(-8deg) rotateX(4deg) !important; }
@@ -627,12 +669,24 @@
       <div class="footer-inner">
         <a href="#" class="wordmark">Voxerly</a>
         <div style="display:flex;align-items:center;gap:20px;">
+          <a href="/terms.html" style="font-size:13px;color:var(--muted);text-decoration:none;" onmouseover="this.style.color='var(--body)'" onmouseout="this.style.color='var(--muted)'">Terms</a>
           <a href="/privacy.html" style="font-size:13px;color:var(--muted);text-decoration:none;" onmouseover="this.style.color='var(--body)'" onmouseout="this.style.color='var(--muted)'">Privacy Policy</a>
           <p class="footer-copy">© 2026 Voxerly</p>
         </div>
       </div>
     </div>
   </footer>
+
+  <!-- ─── Cookie Banner ─── -->
+  <div id="cookie-banner" style="display:none;">
+    <div class="cookie-inner">
+      <p class="cookie-text">We use cookies and local storage to improve your experience.</p>
+      <div class="cookie-actions">
+        <a href="/cookies.html" class="cookie-learn">Learn more</a>
+        <button class="cookie-accept" id="cookie-accept">Accept</button>
+      </div>
+    </div>
+  </div>
 
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <script>
@@ -800,6 +854,15 @@
 
     // ─── Returning visitor ───
     if (localStorage.getItem(LS_KEY)) showSuccess("You're on the list.");
+
+    // ─── Cookie banner ───
+    const COOKIE_KEY = 'voxerly_cookie_accepted';
+    const cookieBanner = document.getElementById('cookie-banner');
+    if (!localStorage.getItem(COOKIE_KEY)) cookieBanner.style.display = '';
+    document.getElementById('cookie-accept').addEventListener('click', () => {
+      localStorage.setItem(COOKIE_KEY, '1');
+      cookieBanner.style.display = 'none';
+    });
   </script>
 </body>
 </html>
