@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/bobas/.claude/skills/ui-ux-pro-max/**)",
+      "Bash(python scripts/search.py \"AI marketplace dark tech SaaS launch landing page FOMO waitlist\" --design-system -p \"Voxerly\" -f markdown)",
+      "Bash(python scripts/search.py \"dark mode tech futuristic glow particles\" --domain style -n 3)",
+      "Bash(python scripts/search.py \"hero waitlist email form social proof counter animation\" --domain landing -n 3)",
+      "Bash(python skills/ui-ux-pro-max/scripts/search.py \"AI marketplace peer-to-peer commerce light minimal confident\" --design-system -p \"Voxerly\" -f markdown)",
+      "Bash(python *)"
+    ]
+  }
+}

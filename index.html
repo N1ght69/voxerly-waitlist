@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Voxerly — The AI Marketplace</title>
+  <meta name="description" content="Voxerly is a peer-to-peer marketplace for agents, automation workflows, fine-tuned models, and AI-powered apps. Sellers set their price. Buyers get instant access.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;0,700;1,400;1,700&family=Epilogue:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:           #0D0D0B;
+      --bg-raised:    #161614;
+      --accent:       #E8A838;
+      --accent-tint:  rgba(232, 168, 56, 0.1);
+      --heading:      #F0EEE8;
+      --body:         #A09E98;
+      --muted:        #6B6963;
+      --border:       #2A2825;
+      --border-faint: #201F1D;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--body);
+      font-family: 'Epilogue', sans-serif;
+      font-size: 16px;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── Type ─── */
+    h1, h2, h3 {
+      font-family: 'Fraunces', serif;
+      color: var(--heading);
+      line-height: 1.12;
+    }
+    h1 { font-size: clamp(2.4rem, 5vw, 3.75rem); font-weight: 700; }
+    h2 { font-size: clamp(1.625rem, 3vw, 2.375rem); font-weight: 600; }
+    h3 { font-size: 1.0625rem; font-weight: 600; }
+
+    .accent { color: var(--accent); }
+
+    /* ─── Layout ─── */
+    .container { max-width: 1160px; margin: 0 auto; padding: 0 32px; }
+
+    /* ─── Buttons ─── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'Epilogue', sans-serif;
+      font-weight: 500;
+      font-size: 14px;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      border: none;
+      text-decoration: none;
+      transition: opacity 0.15s;
+      white-space: nowrap;
+    }
+    .btn-primary { background: var(--accent); color: #0D0D0B; }
+    .btn-primary:hover { opacity: 0.85; }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* ─── Nav ─── */
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--bg);
+      border-bottom: 1px solid #1F1F1C;
+      padding: 20px 0;
+    }
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .wordmark {
+      font-family: 'Fraunces', serif;
+      font-style: italic;
+      font-size: 1.1875rem;
+      font-weight: 700;
+      color: var(--heading);
+      text-decoration: none;
+      letter-spacing: -0.025em;
+    }
+
+    /* ─── Hero ─── */
+    .hero { padding: 88px 0 100px; overflow: hidden; }
+    .hero-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 72px;
+      align-items: center;
+    }
+    .hero-content { max-width: 520px; }
+    .hero-content h1 { margin-bottom: 20px; }
+    .hero-sub {
+      font-size: 1.0625rem;
+      color: var(--body);
+      max-width: 440px;
+      margin-bottom: 16px;
+      line-height: 1.72;
+    }
+    .hero-stats {
+      font-size: 12.5px;
+      color: var(--muted);
+      margin-bottom: 40px;
+      line-height: 1.5;
+    }
+    .stat-sep { margin: 0 9px; opacity: 0.45; }
+
+    /* ─── Form ─── */
+    .form-label { font-size: 12px; color: var(--muted); margin-bottom: 10px; }
+    .form-toggles { display: flex; gap: 8px; margin-bottom: 14px; }
+    .toggle-pill {
+      font-family: 'Epilogue', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 7px 16px;
+      border-radius: 100px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+    }
+    .toggle-pill.active {
+      background: var(--accent-tint);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .form-inline { display: flex; gap: 8px; }
+    .form-input {
+      flex: 1;
+      padding: 11px 16px;
+      background: #141412;
+      border: 1px solid #2A2A26;
+      border-radius: 6px;
+      color: var(--heading);
+      font-family: 'Epilogue', sans-serif;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.15s;
+      min-width: 0;
+    }
+    .form-input::placeholder { color: var(--muted); }
+    .form-input:focus { border-color: var(--accent); }
+    .form-input.error { border-color: #C0614A; }
+    .form-note { font-size: 12px; color: var(--muted); margin-top: 12px; }
+    .form-success {
+      display: none;
+      font-size: 15px;
+      color: var(--heading);
+      padding: 12px 0 0;
+    }
+    .form-success.visible { display: block; }
+
+    /* ─── Hero mockup ─── */
+    .hero-mockup {
+      perspective: 1400px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .mockup-tilt {
+      width: 300px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transform: rotateY(-8deg) rotateX(4deg);
+      transform-origin: center center;
+      animation: hfloat 5s ease-in-out infinite alternate;
+    }
+    @keyframes hfloat {
+      from { transform: rotateY(-8deg) rotateX(4deg) translateY(-8px); }
+      to   { transform: rotateY(-8deg) rotateX(4deg) translateY(8px); }
+    }
+    .listing-card {
+      background: #1A1A17;
+      border: 1px solid #2A2A26;
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.35);
+    }
+    .lc-header { display: flex; align-items: center; gap: 7px; margin-bottom: 10px; }
+    .lc-icon-wrap {
+      width: 22px; height: 22px;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--bg-raised);
+      border-radius: 5px;
+      color: var(--body);
+      flex-shrink: 0;
+    }
+    .lc-category { font-size: 11px; font-weight: 500; color: var(--muted); }
+    .lc-name {
+      font-family: 'Fraunces', serif;
+      font-size: 13.5px; font-weight: 600;
+      color: var(--heading);
+      margin-bottom: 4px; line-height: 1.25;
+    }
+    .lc-desc { font-size: 11.5px; color: var(--muted); line-height: 1.4; margin-bottom: 9px; }
+    .lc-stars { display: flex; gap: 1px; margin-bottom: 9px; font-size: 11px; letter-spacing: 1px; }
+    .star.filled { color: var(--accent); }
+    .star.empty  { color: var(--border); }
+    .lc-tags { display: flex; gap: 5px; margin-bottom: 12px; flex-wrap: wrap; }
+    .lc-tag {
+      font-size: 10.5px; font-weight: 500;
+      color: var(--muted);
+      background: var(--bg-raised);
+      padding: 2px 7px; border-radius: 4px;
+    }
+    .lc-footer-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding-top: 10px;
+      border-top: 1px solid #2A2A26;
+    }
+    .lc-price {
+      font-family: 'Fraunces', serif;
+      font-size: 15px; font-weight: 700;
+      color: var(--heading);
+    }
+    .lc-buy {
+      font-family: 'Epilogue', sans-serif;
+      font-size: 11.5px; font-weight: 500;
+      background: var(--accent); color: #0D0D0B;
+      border: none; border-radius: 5px;
+      padding: 5px 12px; cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    .lc-buy:hover { opacity: 0.85; }
+
+    /* ─── Section base ─── */
+    .section { padding: 96px 0; }
+    .eyebrow {
+      font-size: 12px; font-weight: 500;
+      text-transform: uppercase; letter-spacing: 0.09em;
+      color: var(--muted); margin-bottom: 16px;
+    }
+
+    /* ─── How it works ─── */
+    .how-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 56px;
+      margin-top: 64px;
+    }
+    .how-num {
+      font-size: 11px; font-weight: 500;
+      color: var(--muted); letter-spacing: 0.1em;
+      margin-bottom: 20px;
+    }
+    .how-icon {
+      color: var(--body);
+      margin-bottom: 16px;
+      display: flex;
+    }
+    .how-item h3 { margin-bottom: 10px; }
+    .how-item p  { font-size: 14px; line-height: 1.65; }
+
+    /* ─── Who it's for ─── */
+    .who-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 72px;
+      margin-top: 64px;
+    }
+    .who-icon-row {
+      color: var(--muted);
+      display: flex;
+      margin-bottom: 16px;
+    }
+    .who-heading {
+      font-family: 'Fraunces', serif;
+      font-size: 1.1875rem; font-weight: 600;
+      color: var(--heading);
+      border-left: 2px solid var(--accent);
+      padding-left: 14px;
+      margin-bottom: 24px;
+      line-height: 1.3;
+    }
+    .who-list {
+      list-style: none;
+      display: flex; flex-direction: column;
+      gap: 12px;
+    }
+    .who-list li {
+      font-size: 14px; color: var(--body);
+      padding-left: 18px;
+      position: relative; line-height: 1.55;
+    }
+    .who-list li::before {
+      content: '–';
+      position: absolute; left: 0;
+      color: var(--muted);
+    }
+
+    /* ─── What gets sold ─── */
+    .sold-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0 48px;
+      margin-top: 48px;
+    }
+    .sold-item {
+      display: flex; align-items: center;
+      gap: 12px;
+      font-size: 14px; color: var(--body);
+      padding: 13px 0;
+    }
+    .sold-icon { color: var(--muted); flex-shrink: 0; display: flex; }
+
+    /* ─── Founding note ─── */
+    .founding-section { padding: 72px 0; }
+    .founding-para {
+      font-size: 15px;
+      max-width: 580px;
+      line-height: 1.8;
+      margin-top: 16px;
+    }
+
+    /* ─── Final CTA ─── */
+    .final-cta { padding: 96px 0; }
+    .final-cta h2 { margin-bottom: 40px; }
+    .cta-stats {
+      font-size: 12.5px; color: var(--muted);
+      margin-top: 28px; line-height: 1.5;
+    }
+
+    /* ─── Footer ─── */
+    footer {
+      border-top: 1px solid var(--border-faint);
+      padding: 28px 0;
+    }
+    .footer-inner {
+      display: flex; align-items: center;
+      justify-content: space-between;
+    }
+    .footer-copy { font-size: 13px; color: var(--muted); }
+
+    /* ─── Scroll reveal ─── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+    }
+    .reveal.visible { opacity: 1; transform: none; }
+
+    /* ─── Reduced motion ─── */
+    @media (prefers-reduced-motion: reduce) {
+      .mockup-tilt { animation: none !important; transform: rotateY(-8deg) rotateX(4deg) !important; }
+      .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+    }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 900px) {
+      .hero-inner { grid-template-columns: 1fr; }
+      .hero-mockup { display: none; }
+      .how-grid { grid-template-columns: 1fr; gap: 40px; }
+      .who-grid { grid-template-columns: 1fr; gap: 48px; }
+    }
+    @media (max-width: 600px) {
+      .container { padding: 0 20px; }
+      .section { padding: 64px 0; }
+      .hero { padding: 60px 0 72px; }
+      h1 { font-size: 2.25rem; }
+      .hero-stats { font-size: 11.5px; }
+      .form-inline { flex-direction: column; }
+      .form-inline .btn { width: 100%; justify-content: center; }
+      .sold-grid { grid-template-columns: 1fr; gap: 0; }
+      .founding-section { padding: 48px 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ─── Nav ─── -->
+  <nav class="nav">
+    <div class="container">
+      <div class="nav-inner">
+        <a href="#" class="wordmark">Voxerly</a>
+        <a href="#hero-form" class="btn btn-primary">Get early access</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ─── Hero ─── -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-inner">
+
+        <div class="hero-content">
+          <h1>A marketplace for AI tools that actually <span class="accent">work.</span></h1>
+          <p class="hero-sub">Peer-to-peer. Builders set the price. Buyers get instant access.</p>
+          <p class="hero-stats">
+            500+ tools ready to list
+            <span class="stat-sep">·</span>
+            Founding sellers pay 0% fees
+          </p>
+
+          <div id="hero-form">
+            <input type="text" name="website" style="display:none;" aria-hidden="true" tabindex="-1" autocomplete="off">
+            <p class="form-label">How are you joining?</p>
+            <div class="form-toggles">
+              <button class="toggle-pill" data-role="buyer">I'm a Buyer</button>
+              <button class="toggle-pill" data-role="seller">I'm a Seller</button>
+            </div>
+            <div class="form-inline">
+              <input type="email" class="form-input" id="email-1" placeholder="your@email.com" aria-label="Email address">
+              <button class="btn btn-primary" id="submit-1">Get early access</button>
+            </div>
+            <p class="form-note">No spam. One email when Voxerly launches.</p>
+          </div>
+          <p class="form-success" id="success-1">You're on the list.</p>
+        </div>
+
+        <div class="hero-mockup" aria-hidden="true">
+          <div class="mockup-tilt">
+
+            <div class="listing-card">
+              <div class="lc-header">
+                <div class="lc-icon-wrap"><span data-lucide="bot" style="width:13px;height:13px;"></span></div>
+                <span class="lc-category">Agent</span>
+              </div>
+              <div class="lc-name">Lead Gen Agent</div>
+              <div class="lc-desc">Finds and qualifies LinkedIn prospects automatically</div>
+              <div class="lc-stars">
+                <span class="star filled">★</span><span class="star filled">★</span><span class="star filled">★</span><span class="star filled">★</span><span class="star filled">★</span>
+              </div>
+              <div class="lc-tags">
+                <span class="lc-tag">n8n</span><span class="lc-tag">Agent</span><span class="lc-tag">LinkedIn</span>
+              </div>
+              <div class="lc-footer-row">
+                <span class="lc-price">$49</span>
+                <button class="lc-buy">Buy</button>
+              </div>
+            </div>
+
+            <div class="listing-card">
+              <div class="lc-header">
+                <div class="lc-icon-wrap"><span data-lucide="zap" style="width:13px;height:13px;"></span></div>
+                <span class="lc-category">Workflow</span>
+              </div>
+              <div class="lc-name">Email Automation Suite</div>
+              <div class="lc-desc">Drafts, sends and follows up on cold outreach</div>
+              <div class="lc-stars">
+                <span class="star filled">★</span><span class="star filled">★</span><span class="star filled">★</span><span class="star filled">★</span><span class="star empty">★</span>
+              </div>
+              <div class="lc-tags">
+                <span class="lc-tag">Make</span><span class="lc-tag">Workflow</span><span class="lc-tag">Email</span>
+              </div>
+              <div class="lc-footer-row">
+                <span class="lc-price">$29</span>
+                <button class="lc-buy">Buy</button>
+              </div>
+            </div>
+
+            <div class="listing-card">
+              <div class="lc-header">
+                <div class="lc-icon-wrap"><span data-lucide="code-2" style="width:13px;height:13px;"></span></div>
+                <span class="lc-category">App</span>
+              </div>
+              <div class="lc-name">SEO Content Pipeline</div>
+              <div class="lc-desc">Researches keywords and writes optimised drafts</div>
+              <div class="lc-stars">
+                <span class="star filled">★</span><span class="star filled">★</span><span class="star filled">★</span><span class="star filled">★</span><span class="star filled">★</span>
+              </div>
+              <div class="lc-tags">
+                <span class="lc-tag">Claude</span><span class="lc-tag">App</span><span class="lc-tag">SEO</span>
+              </div>
+              <div class="lc-footer-row">
+                <span class="lc-price">$39</span>
+                <button class="lc-buy">Buy</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── How it works ─── -->
+  <section class="section">
+    <div class="container">
+      <p class="eyebrow reveal">How it works</p>
+      <h2 class="reveal">Simple to list. Simple to buy.</h2>
+      <div class="how-grid">
+        <div class="how-item reveal">
+          <p class="how-num">01</p>
+          <div class="how-icon"><span data-lucide="list-plus" style="width:22px;height:22px;"></span></div>
+          <h3>List what you built</h3>
+          <p>Write a description, set your price, and upload your files or link. Your listing is live the same day.</p>
+        </div>
+        <div class="how-item reveal">
+          <p class="how-num">02</p>
+          <div class="how-icon"><span data-lucide="shopping-bag" style="width:22px;height:22px;"></span></div>
+          <h3>Buyers browse and buy</h3>
+          <p>People searching for exactly what you built find it, pay, and get access. You don't have to sell anything.</p>
+        </div>
+        <div class="how-item reveal">
+          <p class="how-num">03</p>
+          <div class="how-icon"><span data-lucide="download" style="width:22px;height:22px;"></span></div>
+          <h3>Instant delivery</h3>
+          <p>The moment payment clears, buyers get a download link or access credentials. No fulfilment needed on your end.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Who it's for ─── -->
+  <section class="section">
+    <div class="container">
+      <p class="eyebrow reveal">Who it's for</p>
+      <div class="who-grid">
+        <div class="reveal">
+          <div class="who-icon-row"><span data-lucide="code-2" style="width:20px;height:20px;"></span></div>
+          <h3 class="who-heading">For Builders</h3>
+          <ul class="who-list">
+            <li>Sell tools you already built</li>
+            <li>Set your own price</li>
+            <li>Earn passively while you sleep</li>
+            <li>0% fees for founding sellers</li>
+          </ul>
+        </div>
+        <div class="reveal">
+          <div class="who-icon-row"><span data-lucide="shopping-bag" style="width:20px;height:20px;"></span></div>
+          <h3 class="who-heading">For Buyers</h3>
+          <ul class="who-list">
+            <li>Browse verified AI tools</li>
+            <li>Buy and download instantly</li>
+            <li>Agents, workflows, apps and models</li>
+            <li>No subscriptions — pay once</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── What gets sold ─── -->
+  <section class="section">
+    <div class="container">
+      <p class="eyebrow reveal">Categories</p>
+      <h2 class="reveal">What gets sold here</h2>
+      <div class="sold-grid">
+        <div class="sold-item reveal">
+          <span class="sold-icon" data-lucide="bot" style="width:16px;height:16px;"></span>AI Agents
+        </div>
+        <div class="sold-item reveal">
+          <span class="sold-icon" data-lucide="zap" style="width:16px;height:16px;"></span>Automation Workflows
+        </div>
+        <div class="sold-item reveal">
+          <span class="sold-icon" data-lucide="message-square" style="width:16px;height:16px;"></span>Claude Projects
+        </div>
+        <div class="sold-item reveal">
+          <span class="sold-icon" data-lucide="cpu" style="width:16px;height:16px;"></span>GPT Configurations
+        </div>
+        <div class="sold-item reveal">
+          <span class="sold-icon" data-lucide="git-branch" style="width:16px;height:16px;"></span>n8n Flows
+        </div>
+        <div class="sold-item reveal">
+          <span class="sold-icon" data-lucide="layers" style="width:16px;height:16px;"></span>Make Scenarios
+        </div>
+        <div class="sold-item reveal">
+          <span class="sold-icon" data-lucide="layout-dashboard" style="width:16px;height:16px;"></span>AI Apps
+        </div>
+        <div class="sold-item reveal">
+          <span class="sold-icon" data-lucide="brain" style="width:16px;height:16px;"></span>Fine-tuned Models
+        </div>
+        <div class="sold-item reveal">
+          <span class="sold-icon" data-lucide="mic" style="width:16px;height:16px;"></span>Voice Agents
+        </div>
+        <div class="sold-item reveal">
+          <span class="sold-icon" data-lucide="database" style="width:16px;height:16px;"></span>Data Pipelines
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Founding note ─── -->
+  <section class="founding-section">
+    <div class="container">
+      <p class="eyebrow reveal">Founding sellers</p>
+      <p class="founding-para reveal">Founding sellers — the first 100 people to list on Voxerly — pay zero platform fees for six months. That means 100% of every sale goes directly to you.</p>
+    </div>
+  </section>
+
+  <!-- ─── Final CTA ─── -->
+  <section class="final-cta" id="waitlist">
+    <div class="container">
+      <h2 class="reveal">Get early access.</h2>
+
+      <div id="cta-form" class="reveal">
+        <input type="text" name="website" style="display:none;" aria-hidden="true" tabindex="-1" autocomplete="off">
+        <div class="form-toggles">
+          <button class="toggle-pill" data-role="buyer">I'm a Buyer</button>
+          <button class="toggle-pill" data-role="seller">I'm a Seller</button>
+        </div>
+        <div class="form-inline">
+          <input type="email" class="form-input" id="email-2" placeholder="your@email.com" aria-label="Email address">
+          <button class="btn btn-primary" id="submit-2">Get early access</button>
+        </div>
+        <p class="form-note">No spam. One email when Voxerly launches.</p>
+      </div>
+      <p class="form-success" id="success-2">You're on the list.</p>
+
+      <p class="cta-stats reveal">
+        500+ tools ready to list
+        <span class="stat-sep">·</span>
+        Founding sellers pay 0% fees
+      </p>
+    </div>
+  </section>
+
+  <!-- ─── Footer ─── -->
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <a href="#" class="wordmark">Voxerly</a>
+        <p class="footer-copy">© 2026 Voxerly</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script>
+    lucide.createIcons();
+
+    // ─── Scroll reveal with sibling stagger ───
+    const revealEls = document.querySelectorAll('.reveal');
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      const seen = new Map();
+      revealEls.forEach(el => {
+        const parent = el.parentElement;
+        const idx = seen.get(parent) ?? 0;
+        el.style.transitionDelay = (idx * 120) + 'ms';
+        seen.set(parent, idx + 1);
+      });
+      const io = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+          if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
+        });
+      }, { threshold: 0.08, rootMargin: '0px 0px -32px 0px' });
+      revealEls.forEach(el => io.observe(el));
+    } else {
+      revealEls.forEach(el => el.classList.add('visible'));
+    }
+
+    // ─── Toggle pills ───
+    document.querySelectorAll('.toggle-pill').forEach(pill => {
+      pill.addEventListener('click', () => pill.classList.toggle('active'));
+    });
+
+    // ─── Security constants ───
+    const BLOCKED_DOMAINS = [
+      'mailinator.com', 'tempmail.com', 'guerrillamail.com',
+      'throwaway.email', 'yopmail.com', 'sharklasers.com', 'trashmail.com'
+    ];
+    const RATE_KEY   = 'voxerly_rate';
+    const EMAILS_KEY = 'voxerly_emails';
+    const LS_KEY     = 'voxerly_waitlist';
+    const MAX_SUBS   = 3;
+    const WINDOW_MS  = 24 * 60 * 60 * 1000;
+
+    function sanitize(str) {
+      return str.replace(/<[^>]*>/g, '').trim().slice(0, 254);
+    }
+
+    function isValidEmail(email) {
+      if (email.length < 6) return false;
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return false;
+      if (/\.\./.test(email)) return false;
+      const domain = email.split('@').pop().toLowerCase();
+      return !BLOCKED_DOMAINS.includes(domain);
+    }
+
+    function isRateLimited() {
+      try {
+        const now = Date.now();
+        const ts = JSON.parse(localStorage.getItem(RATE_KEY) || '[]')
+                     .filter(t => now - t < WINDOW_MS);
+        return ts.length >= MAX_SUBS;
+      } catch { return false; }
+    }
+
+    function isDuplicate(email) {
+      try {
+        const emails = JSON.parse(localStorage.getItem(EMAILS_KEY) || '[]');
+        if (emails.includes(email.toLowerCase())) return true;
+        const old = JSON.parse(localStorage.getItem(LS_KEY) || 'null');
+        return old?.email?.toLowerCase() === email.toLowerCase();
+      } catch { return false; }
+    }
+
+    function recordSubmission(email) {
+      try {
+        const now = Date.now();
+        const ts = JSON.parse(localStorage.getItem(RATE_KEY) || '[]')
+                     .filter(t => now - t < WINDOW_MS);
+        ts.push(now);
+        localStorage.setItem(RATE_KEY, JSON.stringify(ts));
+        const emails = JSON.parse(localStorage.getItem(EMAILS_KEY) || '[]');
+        emails.push(email.toLowerCase());
+        localStorage.setItem(EMAILS_KEY, JSON.stringify(emails));
+      } catch {}
+    }
+
+    function startCooldown(btn) {
+      btn.disabled = true;
+      setTimeout(() => { btn.disabled = false; }, 3000);
+    }
+
+    function getRoles(formEl) {
+      return [...formEl.querySelectorAll('.toggle-pill.active')].map(p => p.dataset.role);
+    }
+
+    function showSuccess(message) {
+      ['hero-form', 'cta-form'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+      });
+      ['success-1', 'success-2'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) { el.textContent = message; el.classList.add('visible'); }
+      });
+    }
+
+    // ─── Form setup ───
+    function setupForm(formId, inputId, btnId) {
+      const form  = document.getElementById(formId);
+      const input = document.getElementById(inputId);
+      const btn   = document.getElementById(btnId);
+      if (!form || !input || !btn) return;
+
+      async function attempt() {
+        startCooldown(btn);
+
+        // Honeypot
+        const hp = form.querySelector('input[name="website"]');
+        if (hp && hp.value) return;
+
+        // Rate limit
+        if (isRateLimited()) {
+          showSuccess("You've already signed up. We'll be in touch.");
+          return;
+        }
+
+        // Sanitize + validate
+        const email = sanitize(input.value);
+        if (!isValidEmail(email)) {
+          input.classList.add('error');
+          input.focus();
+          input.addEventListener('input', () => input.classList.remove('error'), { once: true });
+          return;
+        }
+
+        // Duplicate
+        if (isDuplicate(email)) {
+          showSuccess("Looks like you're already on the list.");
+          return;
+        }
+
+        // Submit
+        const payload = { email, roles: getRoles(form), timestamp: new Date().toISOString() };
+        console.log(JSON.stringify(payload, null, 2));
+
+        try {
+          await fetch('/.netlify/functions/subscribe', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+        } catch (_) {
+          // Network error — record locally and continue
+        }
+
+        recordSubmission(email);
+        localStorage.setItem(LS_KEY, JSON.stringify(payload));
+        showSuccess("You're on the list.");
+      }
+
+      btn.addEventListener('click', attempt);
+      input.addEventListener('keydown', e => { if (e.key === 'Enter') attempt(); });
+    }
+
+    setupForm('hero-form', 'email-1', 'submit-1');
+    setupForm('cta-form',  'email-2', 'submit-2');
+
+    // ─── Returning visitor ───
+    if (localStorage.getItem(LS_KEY)) showSuccess("You're on the list.");
+  </script>
+</body>
+</html>
