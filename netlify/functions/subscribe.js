@@ -1,5 +1,3 @@
-const VALID_ROLES = ['buyer', 'seller', 'both'];
-
 exports.handler = async (event) => {
   console.log('Function called with body: ' + event.body);
 
@@ -14,11 +12,16 @@ exports.handler = async (event) => {
     return { statusCode: 400, body: JSON.stringify({ error: 'Invalid JSON' }) };
   }
 
-  const { email, role } = body;
+  const { email, roles } = body;
 
-  if (!email || !VALID_ROLES.includes(role)) {
+  if (!email) {
     return { statusCode: 400, body: JSON.stringify({ error: 'Invalid email' }) };
   }
+
+  const rolesArray = Array.isArray(roles) ? roles : [];
+  const hasBuyer  = rolesArray.includes('buyer');
+  const hasSeller = rolesArray.includes('seller');
+  const role = (hasBuyer && hasSeller) ? 'both' : hasBuyer ? 'buyer' : hasSeller ? 'seller' : 'buyer';
 
   try {
     const res = await fetch('https://api.brevo.com/v3/contacts', {
