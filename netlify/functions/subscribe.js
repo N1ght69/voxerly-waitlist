@@ -23,6 +23,14 @@ exports.handler = async (event) => {
   const hasSeller = rolesArray.includes('seller');
   const role = (hasBuyer && hasSeller) ? 'both' : hasBuyer ? 'buyer' : hasSeller ? 'seller' : 'buyer';
 
+  const brevoPayload = {
+    email,
+    attributes: { ROLE: role },
+    listIds: [3],
+    updateEnabled: true
+  };
+  console.log('Sending to Brevo:', JSON.stringify(brevoPayload));
+
   try {
     const res = await fetch('https://api.brevo.com/v3/contacts', {
       method: 'POST',
@@ -31,12 +39,7 @@ exports.handler = async (event) => {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
       },
-      body: JSON.stringify({
-        email,
-        attributes: { ROLE: role },
-        listIds: [3],
-        updateEnabled: true
-      })
+      body: JSON.stringify(brevoPayload)
     });
 
     const resBody = await res.text().catch(() => '');
