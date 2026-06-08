@@ -900,7 +900,7 @@
         console.log(JSON.stringify(payload, null, 2));
 
         try {
-          await fetch('/.netlify/functions/subscribe', {
+          await fetch('/api/subscribe', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
