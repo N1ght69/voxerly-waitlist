@@ -183,6 +183,8 @@
     .form-note { font-size: 12px; color: var(--muted); margin-top: 12px; }
     .toggle-error { display: none; font-size: 12px; color: #E8A838; margin-top: -8px; margin-bottom: 12px; }
     .toggle-error.visible { display: block; }
+    .email-error { display: none; font-size: 12px; color: #C0614A; margin-top: 8px; }
+    .email-error.visible { display: block; }
     .form-success {
       display: none;
       font-size: 15px;
@@ -487,6 +489,7 @@
               <input type="email" class="form-input" id="email-1" placeholder="your@email.com" aria-label="Email address">
               <button class="btn btn-primary" id="submit-1">Get early access</button>
             </div>
+            <p class="email-error">Please enter a valid email address</p>
             <p class="form-note">No spam. One email when Voxerly launches.</p>
           </div>
           <p class="form-success" id="success-1">You're on the list.</p>
@@ -680,6 +683,7 @@
           <input type="email" class="form-input" id="email-2" placeholder="your@email.com" aria-label="Email address">
           <button class="btn btn-primary" id="submit-2">Get early access</button>
         </div>
+        <p class="email-error">Please enter a valid email address</p>
         <p class="form-note">No spam. One email when Voxerly launches.</p>
       </div>
       <p class="form-success" id="success-2">You're on the list.</p>
@@ -769,7 +773,8 @@
     // ─── Security constants ───
     const BLOCKED_DOMAINS = [
       'mailinator.com', 'tempmail.com', 'guerrillamail.com',
-      'throwaway.email', 'yopmail.com', 'sharklasers.com', 'trashmail.com'
+      'throwaway.email', 'yopmail.com', 'sharklasers.com', 'trashmail.com',
+      'example.invalid', 'example.test', 'foo.example', 'localhost'
     ];
     const RATE_KEY   = 'voxerly_rate';
     const EMAILS_KEY = 'voxerly_emails';
@@ -786,6 +791,7 @@
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return false;
       if (/\.\./.test(email)) return false;
       const domain = email.split('@').pop().toLowerCase();
+      if (domain.endsWith('.invalid') || domain.endsWith('.test')) return false;
       return !BLOCKED_DOMAINS.includes(domain);
     }
 
@@ -870,12 +876,18 @@
 
         // Sanitize + validate
         const email = sanitize(input.value);
+        const emailError = form.querySelector('.email-error');
         if (!isValidEmail(email)) {
           input.classList.add('error');
           input.focus();
-          input.addEventListener('input', () => input.classList.remove('error'), { once: true });
+          if (emailError) emailError.classList.add('visible');
+          input.addEventListener('input', () => {
+            input.classList.remove('error');
+            if (emailError) emailError.classList.remove('visible');
+          }, { once: true });
           return;
         }
+        if (emailError) emailError.classList.remove('visible');
 
         // Duplicate
         if (isDuplicate(email)) {
